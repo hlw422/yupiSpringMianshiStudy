@@ -38,6 +38,7 @@ public class PostThumb implements Serializable {
      * 创建时间
      */
     private Date createTime;
+    private Date editTime;
 
     /**
      * 更新时间

@@ -4,20 +4,18 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.io.Serializable;
-import java.util.Date;
 import lombok.Data;
 
-/**
- * 帖子收藏
- *
- * @author <a href="https://github.com/liyupi">程序员鱼皮</a>
- * @from <a href="https://yupi.icu">编程导航知识星球</a>
- **/
-@TableName(value = "post_favour")
-@Data
-public class PostFavour implements Serializable {
+import java.io.Serializable;
+import java.util.Date;
 
+/**
+ * 题库题目
+ * @TableName question_bank_question
+ */
+@TableName(value ="question_bank_question")
+@Data
+public class QuestionBankQuestion implements Serializable {
     /**
      * id
      */
@@ -25,9 +23,14 @@ public class PostFavour implements Serializable {
     private Long id;
 
     /**
-     * 帖子 id
+     * 题库 id
      */
-    private Long postId;
+    private Long questionBankId;
+
+    /**
+     * 题目 id
+     */
+    private Long questionId;
 
     /**
      * 创建用户 id
@@ -35,10 +38,14 @@ public class PostFavour implements Serializable {
     private Long userId;
 
     /**
+     * 编辑时间
+     */
+    private Date editTime;
+
+    /**
      * 创建时间
      */
     private Date createTime;
-    private Date editTime;
 
     /**
      * 更新时间
