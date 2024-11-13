@@ -1,7 +1,7 @@
 package com.hlw.study.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import generator.domain.Question;
+import com.hlw.study.model.entity.Question;
 
 /**
 * @author hlw42
