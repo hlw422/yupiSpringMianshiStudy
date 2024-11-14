@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="generator.mapper.PostFavourMapper">
+<mapper namespace="com.hlw.study.mapper.PostFavourMapper">
 
-    <resultMap id="BaseResultMap" type="generator.domain.PostFavour">
+    <resultMap id="BaseResultMap" type="com.hlw.study.model.entity.PostFavour">
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="postId" column="postId" jdbcType="BIGINT"/>
             <result property="userId" column="userId" jdbcType="BIGINT"/>
