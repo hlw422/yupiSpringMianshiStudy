@@ -1,5 +1,11 @@
 package com.hlw.study.controller;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hlw.study.annotation.AuthCheck;
 import com.hlw.study.common.BaseResponse;
@@ -14,8 +20,10 @@ import com.hlw.study.model.dto.question.QuestionEditRequest;
 import com.hlw.study.model.dto.question.QuestionQueryRequest;
 import com.hlw.study.model.dto.question.QuestionUpdateRequest;
 import com.hlw.study.model.entity.Question;
+import com.hlw.study.model.entity.QuestionBankQuestion;
 import com.hlw.study.model.entity.User;
 import com.hlw.study.model.vo.QuestionVO;
+import com.hlw.study.service.QuestionBankQuestionService;
 import com.hlw.study.service.QuestionService;
 import com.hlw.study.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +32,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 题目接口
@@ -38,6 +49,9 @@ public class QuestionController {
 
     @Resource
     private QuestionService questionService;
+
+    @Resource
+    private QuestionBankQuestionService questionBankQuestionService;
 
     @Resource
     private UserService userService;
@@ -57,6 +71,10 @@ public class QuestionController {
         // todo 在此处将实体类和 DTO 进行转换
         Question question = new Question();
         BeanUtils.copyProperties(questionAddRequest, question);
+        List<String>tags=questionAddRequest.getTags();
+        if(tags!=null){
+            question.setTags(JSONUtil.toJsonStr(tags));
+        }
         // 数据校验
         questionService.validQuestion(question, true);
         // todo 填充默认值
@@ -112,6 +130,10 @@ public class QuestionController {
         // todo 在此处将实体类和 DTO 进行转换
         Question question = new Question();
         BeanUtils.copyProperties(questionUpdateRequest, question);
+        List<String>tags=questionUpdateRequest.getTags();
+        if(tags!=null){
+            question.setTags(JSONUtil.toJsonStr(tags));
+        }
         // 数据校验
         questionService.validQuestion(question, false);
         // 判断是否存在
@@ -151,9 +173,33 @@ public class QuestionController {
     public BaseResponse<Page<Question>> listQuestionByPage(@RequestBody QuestionQueryRequest questionQueryRequest) {
         long current = questionQueryRequest.getCurrent();
         long size = questionQueryRequest.getPageSize();
+
+
+
+        QueryWrapper<Question>queryWrapper = questionService.getQueryWrapper(questionQueryRequest);
+ /*
+        long questionBankId=questionQueryRequest.getQuestionBankId();
+        if(questionBankId!=0) {
+            LambdaQueryWrapper<QuestionBankQuestion>lambdaQueryWrapper= Wrappers.lambdaQuery(
+                    QuestionBankQuestion.class).
+                    select(QuestionBankQuestion::getQuestionId)
+                    .eq(QuestionBankQuestion::getQuestionBankId,questionBankId);
+            List<QuestionBankQuestion>questionList=questionBankQuestionService.list(lambdaQueryWrapper);
+            if(CollUtil.isNotEmpty(questionList)){
+                Set<Long>questionIdList=questionList.stream().map(QuestionBankQuestion::getId)
+                                .collect(Collectors.toSet());
+                queryWrapper.in("id",questionIdList);
+            }
+        }
+*/
+
         // 查询数据库
+        /*
         Page<Question> questionPage = questionService.page(new Page<>(current, size),
                 questionService.getQueryWrapper(questionQueryRequest));
+                */
+        Page<Question> questionPage = questionService.page(new Page<>(current, size),
+               queryWrapper);
         return ResultUtils.success(questionPage);
     }
 
@@ -218,6 +264,12 @@ public class QuestionController {
         // todo 在此处将实体类和 DTO 进行转换
         Question question = new Question();
         BeanUtils.copyProperties(questionEditRequest, question);
+
+         List<String> tags=questionEditRequest.getTags();
+         if(tags!=null){
+             question.setTags(JSONUtil.toJsonStr(tags));
+         }
+
         // 数据校验
         questionService.validQuestion(question, false);
         User loginUser = userService.getLoginUser(request);
